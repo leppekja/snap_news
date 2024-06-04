@@ -1,0 +1,16 @@
+---
+
+---
+
+<ul>
+    {% for member in site.data.articles %}
+        <li>
+            <a href="{{ member.link }}">
+                <i>{{member.time | date_to_string: "ordinal", "US"}}</i>: {{ member.title }}
+                <ul>
+                    <li>{{ member.description }}</li>
+                </ul>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
