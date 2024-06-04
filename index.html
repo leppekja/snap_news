@@ -1,16 +1,24 @@
 ---
 
 ---
+<title>SNAP Benefits News</title>
+<h1>SNAP Benefits News</h1>
+<p>Proof of concept automated SNAP news aggregator based on a filtered Google Alerts Feed</p>
 
-<ul>
-    {% for member in site.data.articles %}
-        <li>
-            <a href="{{ member.link }}">
-                <i>{{member.time | date_to_string: "ordinal", "US"}}</i>: {{ member.title }}
+{% assign sorted_articles = site.data.articles | sort: 'time' | reverse %}
+{% assign grouped_articles = sorted_articles | group_by_exp: 'article', 'article.time | date: "%Y-%m-%d"' %}
+
+{% for group in grouped_articles %}
+    <h2>{{ group.name }}</h2>
+    <ul>
+        {% for article in group.items %}
+            <li>
+                <b><a href="{{ article.link }}">{{ article.title }}</a></b>
                 <ul>
-                    <li>{{ member.description }}</li>
+                    <li>{{ article.description }}</li>
                 </ul>
-            </a>
-        </li>
-    {% endfor %}
+            </li>
+        {% endfor %}
     </ul>
+{% endfor %}
+
