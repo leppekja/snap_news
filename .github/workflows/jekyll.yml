@@ -42,16 +42,21 @@ jobs:
           ruby-version: '3.2' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Install yq
+        # https://pkg.go.dev/github.com/mikefarah/yq#section-readme
+        run: |
+          sudo add-apt-repository ppa:rmescandon/yq
+          sudo apt update
+          sudo apt install yq -y
       - name: Update Articles
         run: | 
-          curl -s "https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431" > curl_test.html
+          curl -s "https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431" | yq e -r -p=xml ".feed.entry[] | [.id, .published, .title.+content, .content.+content, .link.+@href] | @csv" >> _data/articles.csv
       - name: Commit And Push New Articles
         run: | 
           git config --global user.email "action@github.com"
           git config --global user.name "github-actions"
           git add curl_test.html
-          git commit -m "Update articles curl test"
-          git push https://${{ secrets.GH_PAT }}@github.com/leppekja/snap_news.git HEAD:main
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update daily articles" && git push https://${{ secrets.GH_PAT }}@github.com/leppekja/snap_news.git HEAD:main)
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
       - name: Setup Pages
