@@ -33,6 +33,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          token: ${{ secrets.GH_PAT }} 
       - name: Setup Ruby
         uses: ruby/setup-ruby@8575951200e472d5f2d95c625da0c7bec8217c42 # v1.161.0
         with:
@@ -48,7 +51,7 @@ jobs:
           git config --global user.name "github-actions"
           git add curl_test.html
           git commit -m "Update articles curl test"
-          git push  https://${{ secrets.GH_PAT }}@github.com/leppekja/snap_news.git
+          git push origin HEAD:main
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
       - name: Setup Pages
