@@ -52,7 +52,7 @@ jobs:
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
         with:
-          cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
+          cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
       - name: Commit And Push New Articles
         run: | 
           git config --global user.email "action@github.com"
