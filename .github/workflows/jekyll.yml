@@ -43,14 +43,11 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Install yq
-        # https://pkg.go.dev/github.com/mikefarah/yq#section-readme
-        run: |
-          sudo add-apt-repository ppa:rmescandon/yq
-          sudo apt update
-          sudo apt install yq -y
+        # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
       - name: Update Articles
-        run: | 
-          curl -s "https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431" | yq e -r -p=xml ".feed.entry[] | [.id, .published, .title.+content, .content.+content, .link.+@href] | @csv" >> _data/articles.csv
+        uses: mikefarah/yq@master
+        with:
+          cmd: curl -s "https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431" | yq e -r -p=xml ".feed.entry[] | [.id, .published, .title.+content, .content.+content, .link.+@href] | @csv" >> _data/articles.csv
       - name: Commit And Push New Articles
         run: | 
           git config --global user.email "action@github.com"
