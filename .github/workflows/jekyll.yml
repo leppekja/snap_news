@@ -43,9 +43,9 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Fetch Data
-          id: fetchdata
-          run: |
-            echo "::set-output name=data::$(curl -s 'https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431')"
+        id: fetchdata
+        run: |
+          echo "::set-output name=data::$(curl -s 'https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431')"
       - name: Update Articles
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
@@ -55,7 +55,7 @@ jobs:
         run: | 
           git config --global user.email "action@github.com"
           git config --global user.name "github-actions"
-          git add curl_test.html
+          git add _data/articles.csv
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update daily articles" && git push https://${{ secrets.GH_PAT }}@github.com/leppekja/snap_news.git HEAD:main)
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
