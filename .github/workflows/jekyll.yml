@@ -48,7 +48,7 @@ jobs:
           data=$(curl -s 'https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431')
           data=$(echo "$data" | sed 's/&/\&amp;/g')
           echo "::set-output name=data::$data"
-        - name: Update Articles
+      - name: Update Articles
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
         with:
