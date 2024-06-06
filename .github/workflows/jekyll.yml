@@ -49,6 +49,8 @@ jobs:
           git add curl_test.html
           git commit -m "Update articles curl test"
           git push  
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
