@@ -39,6 +39,14 @@ jobs:
           ruby-version: '3.2' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Update Articles
+        run: | curl -s "https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431" > curl_test.html
+      - name: Commit And Push New Articles
+        run: | git config --global user.email "action@github.com"
+        git config --global user.name "github-actions"
+        git add curl_test.html
+        git commit -m "Update articles curl test"
+        git push  
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
