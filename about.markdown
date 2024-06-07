@@ -4,15 +4,8 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Proof of concept automated SNAP news aggregator based on a filtered Google Alerts Feed. Repository is [accessible here](https://github.com/leppekja/snap_news).
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+New updates are posted around 8PM CT. 
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+Site built with [jekyll](https://github.com/jekyll). Theme used is [minima](https://github.com/jekyll/minima). Deployed through Github Actions. News aggregrated by Google Alerts and parsed with `yq` from mikefarah/yq@master.

@@ -1,10 +1,8 @@
 ---
-
+layout: page
+title: Today's SNAP Updates
+permalink: /
 ---
-<title>SNAP Benefits News</title>
-<h1>SNAP Benefits News</h1>
-<p>Proof of concept automated SNAP news aggregator based on a filtered Google Alerts Feed</p>
-
 {% assign sorted_articles = site.data.articles | sort: 'time' | reverse %}
 {% assign grouped_articles = sorted_articles | group_by_exp: 'article', 'article.time | date: "%Y-%m-%d"' %}
 
@@ -14,8 +12,9 @@
         {% for article in group.items %}
         {% assign description = article.description | downcase %}
             {% if description contains 'benefits' or description contains 'assistance' or description contains 'ebt' or description contains 'qualify' or description contains 'wic' or description contains 'stamps' %}
-                <li>
-                    <b><a href="{{ article.link }}">{{ article.title }}</a></b>
+                <li> 
+                     <!-- https://stackoverflow.com/questions/17711146/how-to-open-link-in-a-new-tab-in-html -->
+                    <b><a target="_blank" rel="noopener noreferrer" href="{{ article.link }}">{{ article.title }}</a></b>
                     <ul>
                         <li>{{ article.description }}</li>
                     </ul>
