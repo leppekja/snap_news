@@ -7,9 +7,9 @@
 name: Deploy Jekyll site to Pages
 
 on:
-  # Runs every day - how to dedupe articles?
+  # Runs every ~ 6 hours
   schedule:
-    - cron: '38 23 * * *'
+    - cron: '18 */6 * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -53,6 +53,10 @@ jobs:
         uses: mikefarah/yq@master
         with:
           cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
+      - name: Deduplicate CSV
+        run: |
+          awk -F, '!seen[$1]++' _data/articles.csv > deduped_articles.csv
+          mv deduped_articles.csv _data/articles.csv
       - name: Commit And Push New Articles
         run: | 
           git config --global user.email "action@github.com"
