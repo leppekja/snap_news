@@ -4,15 +4,16 @@ title: Today's SNAP Updates
 permalink: /
 ---
 {% assign sorted_articles = site.data.articles | sort: 'time' | reverse %}
-{% assign grouped_articles = sorted_articles | group_by_exp: 'article', 'article.time | date: "%Y-%m-%d"' %}
+{% assign grouped_articles = sorted_articles | group_by_exp: 'article', 'article.time | date: "%A, %B %e, %Y"' %}
 
 {% for group in grouped_articles %}
-    <h2>{{ group.name }}</h2>
-    {% if group.items.size > 0 %}
+    <h2>{{ group.name | date: "%A, %B %e" }}</h2>
+    {% assign counter = 0 %}
     <ul>
         {% for article in group.items %}
         {% assign description = article.description | downcase %}
-            {% if description contains 'benefits' or description contains 'assistance' or description contains 'ebt' or description contains 'qualify' or description contains 'wic' or description contains 'stamps' %}
+            {% if description contains 'benefits' or description contains 'assistance' or description contains 'ebt' or description contains 'qualify' or description contains 'WIC' or description contains 'stamps' %}
+                {% assign counter = counter | plus: 1 %}
                 <li> 
                      <!-- https://stackoverflow.com/questions/17711146/how-to-open-link-in-a-new-tab-in-html -->
                     <b><a target="_blank" rel="noopener noreferrer" href="{{ article.link }}">{{ article.title }}</a></b>
@@ -23,8 +24,8 @@ permalink: /
             {% endif %}
         {% endfor %}
     </ul>
-    {% else %}
-        <p>No articles found for this date.</p>
+    {% if counter == 0 %}
+        <p>No articles found for today, {{ group.name }}.</p>
     {% endif %}
 {% endfor %}
 
