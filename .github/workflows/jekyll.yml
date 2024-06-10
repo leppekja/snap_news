@@ -55,7 +55,7 @@ jobs:
           cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
         run: |
-          awk -F, '!seen[$1]++' _data/articles.csv > deduped_articles.csv
+          awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
           mv deduped_articles.csv _data/articles.csv
       - name: Commit And Push New Articles
         run: | 
