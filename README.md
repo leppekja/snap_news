@@ -1,9 +1,10 @@
 # snap_news
+
 SNAP news aggregator
 
 Accessible at [the Github Pages site for this repository](https://leppekja.github.io/snap_news/).
 
-Proof of concept automated SNAP news aggregator based on a filtered Google Alerts Feed. 
+Proof of concept automated SNAP news aggregator based on a filtered Google Alerts Feed.
 
 To do:
 
@@ -14,3 +15,4 @@ To do:
 - [x] Open link in new tab
 - [ ] Manual / batch add for historical articles?
 - [x] Update UI to existing theme
+- [x] Show More button

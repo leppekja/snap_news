@@ -6,7 +6,13 @@ permalink: /
 {% assign sorted_articles = site.data.articles | sort: 'time' | reverse %}
 {% assign grouped_articles = sorted_articles | group_by_exp: 'article', 'article.time | date: "%A, %B %e, %Y"' %}
 
+{% assign currentlyShowingCounter = 0 %}
 {% for group in grouped_articles %}
+    {% if currentlyShowingCounter < 8 %}
+        <div class="article-{{currentlyShowingCounter}}">
+    {% else %}
+        <div class="article-{{currentlyShowingCounter}}" style="display:none">
+    {% endif %}
     <h2>{{ group.name | date: "%A, %B %e" }}</h2>
     {% assign counter = 0 %}
     <ul>
@@ -27,5 +33,26 @@ permalink: /
     {% if counter == 0 %}
         <p>No articles found for today, {{ group.name }}.</p>
     {% endif %}
+    </div>
+    {% assign currentlyShowingCounter = currentlyShowingCounter | plus: 1 %}
 {% endfor %}
 
+<button id="showMore" style="margin: auto; width: 50%; border: 3px solid #2a7ae2; border-radius: 5px; background-color: white; font-size: 15px; display: flex; justify-content: center; align-items: center;">Show me another week of news</button>
+
+<script>
+    var currentlyShowing = 7;
+    var showMoreButton = document.getElementById('showMore');
+
+    showMoreButton.addEventListener('click', function() {
+        const newEndingArticleNum = currentlyShowing + 7;
+        var articles = document.querySelectorAll('[class^="article-"]');
+        for (var i = currentlyShowing; i < newEndingArticleNum; i++) {
+            if (articles[i]) {
+                articles[i].style.display = 'block';
+            }
+        }
+        currentlyShowing = newEndingArticleNum; // Update the currently showing count
+
+    });
+
+</script>
