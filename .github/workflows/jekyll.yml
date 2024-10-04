@@ -68,7 +68,7 @@ jobs:
             .title["#text"], 
             .content["#text"], 
             .link["@href"], 
-            (if .link["@href"] != null and .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") 
+            (if (.link["@href"] | type) == "string" and .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") 
             then .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher 
             else "" end)] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
