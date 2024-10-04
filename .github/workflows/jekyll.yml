@@ -60,7 +60,8 @@ jobs:
         run: |
           decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
           yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
-          echo "yq_data=$yq_output" >> $GITHUB_OUTPUT
+          formatted_yq_output=$(echo "$yq_output" | jq -R -s '.')
+          echo "yq_data=$formatted_yq_output" >> $GITHUB_OUTPUT
       - name: Add Publishers
         run: |
           echo "yq_data=${{ steps.update_articles.outputs.yq_data }}" | jq -r '.[] | [.id, .published, .updated, .title["#text"], .content["#text"], .link["@href"], (if .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") then .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher else "" end)] | @csv' >> _data/articles.csv
