@@ -9,7 +9,7 @@ name: Deploy Jekyll site to Pages
 on:
   # Runs every ~ 6 hours
   schedule:
-    - cron: '18 */6 * * *'
+    - cron: "18 */6 * * *"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,11 +35,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-          token: ${{ secrets.GH_PAT }} 
+          token: ${{ secrets.GH_PAT }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@8575951200e472d5f2d95c625da0c7bec8217c42 # v1.161.0
         with:
-          ruby-version: '3.2' # Not needed with a .ruby-version file
+          ruby-version: "3.2" # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Fetch Data
@@ -48,17 +48,32 @@ jobs:
           data=$(curl -s 'https://www.google.com/alerts/feeds/15522468311074638514/5134974349803283431')
           data=$(echo "$data" | base64 --wrap=0)
           echo "::set-output name=data::$data"
+      # - name: Update Articles
+      #   # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
+      #   uses: mikefarah/yq@master
+      #   with:
+      #     cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
       - name: Update Articles
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
-        with:
-          cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
+        run: |
+          decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
+          yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
+          echo "::set-output name=yq_data::$yq_output"
+      - name: Add Publishers
+        run: |
+          echo "${{ steps.fetchdata.outputs.yq_output }}" | jq -r '.[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href, (if .link.+@href | test("url=https://(?:www\\.)?(.*?)/") then .link.+@href | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher else "" end)] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
         run: |
           awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
           mv deduped_articles.csv _data/articles.csv
+      # - name: Set Up Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.10"
+      #   run: python analyze.py -file _data/articles.csv
       - name: Commit And Push New Articles
-        run: | 
+        run: |
           git config --global user.email "action@github.com"
           git config --global user.name "github-actions"
           git add _data/articles.csv
