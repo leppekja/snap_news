@@ -53,9 +53,10 @@ jobs:
       #   uses: mikefarah/yq@master
       #   with:
       #     cmd: echo "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry[] | [.id, .published, .updated, .title.+content, .content.+content, .link.+@href] | @csv' >> _data/articles.csv
-      - name: Update Articles
+      - name: Install yq package
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
+      - name: Update Articles
         run: |
           decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
           yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
