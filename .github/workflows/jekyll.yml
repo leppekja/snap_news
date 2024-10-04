@@ -68,8 +68,9 @@ jobs:
             .title["#text"], 
             .content["#text"], 
             .link["@href"], 
-            .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher
-            ] | @csv' >> _data/articles.csv
+            (if .link["@href"] != null and .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") 
+            then .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher 
+            else "" end)] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
         run: |
           awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
