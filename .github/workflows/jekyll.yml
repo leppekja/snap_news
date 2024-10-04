@@ -61,11 +61,7 @@ jobs:
         run: |
           decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
           yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
-          formatted_yq_output=$(echo "$yq_output" | jq -R -s '.')
-          echo "yq_data=$formatted_yq_output" >> $GITHUB_OUTPUT
-      - name: Add Publishers
-        run: |
-          echo "${{ steps.update_articles.outputs.yq_data }}" | jq -r '
+          echo "$yq_output" | jq -R -s '.' | jq -r '
             .[] | 
             [.id, 
             .published, 
@@ -75,7 +71,6 @@ jobs:
             .link["@href"], 
             .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher
             ] | @csv' >> _data/articles.csv
-        shell: bash
       - name: Deduplicate CSV
         run: |
           awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
