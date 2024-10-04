@@ -60,8 +60,7 @@ jobs:
         id: update_articles
         run: |
           decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
-          yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
-          echo "$yq_output" | jq -R -s '.' | jq -r '
+          echo "$decoded_data" | yq e -r -p=xml '.feed.entry' | jq -r '
             .[] | 
             [.id, 
             .published, 
