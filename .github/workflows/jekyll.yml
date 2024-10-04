@@ -57,14 +57,12 @@ jobs:
         # https://pkg.go.dev/github.com/mikefarah/yq/v4#section-readme
         uses: mikefarah/yq@master
       - name: Update Articles
+        id: update_articles
         run: |
-          decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
-          yq_output=$(echo "$decoded_data" | yq e -r -p=xml '.feed.entry')
-          formatted_yq_output=$(echo "$yq_output" | jq -R -s '.')
-          echo "yq_data=$formatted_yq_output" >> $GITHUB_OUTPUT
+          "${{ steps.fetchdata.outputs.data }}" | base64 -d | yq e -r -p=xml '.feed.entry'  | jq -R -s '.' >> $GITHUB_OUTPUT
       - name: Add Publishers
         run: |
-          echo "yq_data=${{ steps.update_articles.outputs.yq_data }}" | jq -r '.[] | [.id, .published, .updated, .title["#text"], .content["#text"], .link["@href"], (if .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") then .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher else "" end)] | @csv' >> _data/articles.csv
+          echo "${{ steps.update_articles.outputs.yq_data }}" | jq -r '.[] | [.id, .published, .updated, .title["#text"], .content["#text"], .link["@href"], (if .link["@href"] | test("url=https://(?:www\\.)?(.*?)/") then .link["@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher else "" end)] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
         run: |
           awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
