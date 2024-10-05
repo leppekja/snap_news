@@ -60,17 +60,7 @@ jobs:
         id: update_articles
         run: |
           decoded_data=$(echo "${{ steps.fetchdata.outputs.data }}" | base64 -d)
-          echo "$decoded_data" | yq e -o=json -I=0 -r -p=xml '.feed.entry' | jq -r '
-            .[] | 
-            [.id, 
-            .published, 
-            .updated, 
-            .title.+content, 
-            .content.+content, 
-            .link+@href, 
-            (if (.link+@href != null and (.link+@href | type) == "string" and (.link+@href | test("url=https://(?:www\\.)?(.*?)/"))) 
-            then .link+@href | capture("url=https://(?:www\\.)?(?<publisher>.*?)/").publisher 
-            else "" end)] | @csv' >> _data/articles.csv
+          echo "$decoded_data" | yq e -o=json -I=0 -r -p=xml '.feed.entry' | jq -r '.[] | [.id, .published, .updated, .title.["+content"], .content.["+content"], .link.["+@href"], (if (.link.["+@href"] != null and (.link.["+@href"] | type) == "string" and (.link.["+@href"] | test("url=https://(?:www\\.)?(.*?)"))) then .link.["+@href"] | capture("url=https://(?:www\\.)?(?<publisher>.*?)").publisher else "" end)] | @csv' >> _data/articles.csv
       - name: Deduplicate CSV
         run: |
           awk -F, '!seen[$0]++' _data/articles.csv > deduped_articles.csv
