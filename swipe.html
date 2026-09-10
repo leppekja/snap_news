@@ -7,16 +7,19 @@
     <title>Snap News Swipe Review</title>
     <style>
         :root {
-            --bg-1: #f3f7fb;
-            --bg-2: #dbe8f5;
-            --ink: #1f2a37;
-            --muted: #5f6d7a;
-            --card: #ffffff;
-            --yes: #127a43;
-            --no: #a12b2b;
-            --line: #c6d4e1;
-            --accent: #2a5c8a;
-            --shadow: 0 16px 30px rgba(18, 42, 66, 0.18);
+            --bg-0: #070b12;
+            --bg-1: #0f1726;
+            --bg-2: #162235;
+            --panel: rgba(16, 24, 39, 0.84);
+            --ink: #e8eef9;
+            --muted: #9eb0c8;
+            --card: #131d2d;
+            --card-2: #101726;
+            --yes: #1a9f62;
+            --no: #cf4c4c;
+            --line: #2d3f59;
+            --accent: #4676b5;
+            --shadow: 0 22px 40px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -29,9 +32,9 @@
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(circle at 10% 10%, rgba(42, 92, 138, 0.18), transparent 40%),
-                radial-gradient(circle at 90% 85%, rgba(18, 122, 67, 0.12), transparent 34%),
-                linear-gradient(170deg, var(--bg-1), var(--bg-2));
+                radial-gradient(circle at 10% 10%, rgba(44, 94, 152, 0.22), transparent 42%),
+                radial-gradient(circle at 85% 86%, rgba(30, 132, 84, 0.16), transparent 36%),
+                linear-gradient(165deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -39,9 +42,9 @@
         }
 
         .app {
-            width: min(920px, 100%);
-            background: rgba(255, 255, 255, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.95);
+            width: min(940px, 100%);
+            background: var(--panel);
+            border: 1px solid #324965;
             backdrop-filter: blur(8px);
             border-radius: 18px;
             padding: 18px;
@@ -72,7 +75,7 @@
             border: 2px dashed var(--line);
             border-radius: 12px;
             padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(19, 30, 48, 0.85);
             font-size: 0.9rem;
         }
 
@@ -86,15 +89,15 @@
             text-align: right;
             color: var(--muted);
             font-size: 0.9rem;
-            min-width: 180px;
+            min-width: 220px;
         }
 
         .stage {
             position: relative;
-            height: min(58vh, 520px);
+            height: min(58vh, 540px);
             border-radius: 14px;
             border: 1px solid var(--line);
-            background: linear-gradient(180deg, #ffffff, #f5f9fd);
+            background: linear-gradient(180deg, #101827, #0d1522);
             overflow: hidden;
             display: grid;
             place-items: center;
@@ -104,17 +107,17 @@
         .placeholder {
             color: var(--muted);
             text-align: center;
-            max-width: 580px;
+            max-width: 620px;
             line-height: 1.45;
         }
 
         .card {
-            width: min(640px, 100%);
+            width: min(700px, 100%);
             height: 100%;
-            background: var(--card);
-            border: 1px solid #d3e0eb;
+            background: linear-gradient(180deg, var(--card), var(--card-2));
+            border: 1px solid #32465f;
             border-radius: 14px;
-            box-shadow: 0 10px 24px rgba(33, 63, 92, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
             padding: 16px;
             user-select: none;
             touch-action: none;
@@ -134,7 +137,7 @@
             margin: 0;
             overflow: auto;
             line-height: 1.5;
-            color: #243647;
+            color: #d5e2f5;
             white-space: pre-wrap;
         }
 
@@ -147,10 +150,14 @@
         }
 
         .pill {
-            border: 1px solid #d7e4ef;
+            border: 1px solid #33506d;
             border-radius: 999px;
             padding: 2px 8px;
-            background: #f7fbff;
+            background: rgba(24, 38, 58, 0.9);
+        }
+
+        .pill a {
+            color: #9ac8ff;
         }
 
         .actions {
@@ -194,8 +201,8 @@
         }
 
         .export {
-            background: #375f19;
-            min-width: 160px;
+            background: #618734;
+            min-width: 180px;
         }
 
         .badge {
@@ -211,20 +218,20 @@
 
         .badge.no {
             left: 28px;
-            color: var(--no);
+            color: #ff8f8f;
             border: 2px solid var(--no);
             padding: 4px 8px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(25, 10, 10, 0.88);
         }
 
         .badge.yes {
             right: 28px;
-            color: var(--yes);
+            color: #95e8bd;
             border: 2px solid var(--yes);
             padding: 4px 8px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(10, 26, 16, 0.88);
         }
 
         @media (max-width: 760px) {
@@ -234,10 +241,11 @@
 
             .meta {
                 text-align: left;
+                min-width: 0;
             }
 
             .stage {
-                height: min(64vh, 520px);
+                height: min(66vh, 560px);
             }
         }
     </style>
@@ -246,7 +254,8 @@
 <body>
     <main class="app">
         <h1>Swipe Review</h1>
-        <p class="sub">Upload CSV, swipe right for Yes, left for No. Keyboard: Right, Left, Z(Undo).</p>
+        <p class="sub">Dark mode only. Upload original CSV, swipe Right/Left, export same file with IsOnTopic. Re-upload
+            to continue from remaining rows.</p>
 
         <div class="toolbar">
             <label class="file-wrap">
@@ -258,7 +267,7 @@
 
         <section class="stage" id="stage">
             <div class="placeholder" id="placeholder">
-                Drop or choose a CSV file with headers like title, description, id, link, source.
+                Drop or choose a CSV file with headers including title and description.
             </div>
             <div class="badge no" id="badgeNo">NO</div>
             <div class="badge yes" id="badgeYes">YES</div>
@@ -268,7 +277,7 @@
             <button class="no" id="noBtn" disabled>No (Left)</button>
             <button class="undo" id="undoBtn" disabled>Undo (Z)</button>
             <button class="yes" id="yesBtn" disabled>Yes (Right)</button>
-            <button class="export" id="exportBtn" disabled>Export Decisions</button>
+            <button class="export" id="exportBtn" disabled>Export With IsOnTopic</button>
         </div>
     </main>
 
@@ -284,18 +293,21 @@
         const badgeNo = document.getElementById("badgeNo");
         const badgeYes = document.getElementById("badgeYes");
 
-        let rows = [];
+        let allRows = [];
+        let reviewQueue = [];
         let index = 0;
         let decisions = [];
         let cardEl = null;
+        let originalHeaders = [];
+        let headerLookup = {};
+        let isOnTopicHeader = "IsOnTopic";
+        let detectedDelimiter = ",";
 
         const drag = {
             active: false,
             startX: 0,
             dx: 0
         };
-
-        const csvRequired = ["title", "description"];
 
         function escapeHtml(text) {
             return String(text ?? "")
@@ -368,57 +380,88 @@
             return out;
         }
 
-        function normalizeRowKeys(row) {
-            const normalized = {};
-            for (const [k, v] of Object.entries(row)) {
-                normalized[String(k).trim().toLowerCase()] = typeof v === "string" ? v.trim() : v;
-            }
-            return normalized;
-        }
-
         function buildRowsFromText(text) {
             const firstLine = text.split(/\r?\n/, 1)[0] || "";
-            const delimiter = detectDelimiter(firstLine);
-            const table = parseDelimited(text, delimiter).filter((r) => r.some((c) => String(c).trim() !== ""));
+            detectedDelimiter = detectDelimiter(firstLine);
+            const table = parseDelimited(text, detectedDelimiter).filter((r) => r.some((c) => String(c).trim() !== ""));
 
             if (table.length < 2) {
                 throw new Error("CSV appears empty or missing data rows.");
             }
 
-            const headers = table[0].map((h) => String(h).trim().toLowerCase());
-            const data = table.slice(1).map((line, lineIdx) => {
-                const rec = {};
-                headers.forEach((h, i) => {
-                    rec[h] = (line[i] ?? "").trim();
-                });
-                rec.__line = lineIdx + 2;
-                return normalizeRowKeys(rec);
-            });
+            originalHeaders = table[0].map((h) => String(h).trim());
+            headerLookup = {};
+            for (const header of originalHeaders) {
+                const lowered = header.toLowerCase();
+                if (!headerLookup[lowered]) {
+                    headerLookup[lowered] = header;
+                }
+            }
 
-            const hasRequired = csvRequired.every((key) => headers.includes(key));
-            if (!hasRequired) {
+            const titleHeader = headerLookup.title;
+            const descriptionHeader = headerLookup.description;
+            if (!titleHeader || !descriptionHeader) {
                 throw new Error("Missing required headers: title and description.");
             }
 
-            // Drop rows that have no usable title, per default behavior.
-            return data.filter((r) => (r.title || "").trim().length > 0);
+            isOnTopicHeader = headerLookup.isontopic || "IsOnTopic";
+
+            allRows = table.slice(1).map((line) => {
+                const rec = {};
+                originalHeaders.forEach((h, i) => {
+                    rec[h] = line[i] ?? "";
+                });
+                if (headerLookup.isontopic) {
+                    rec[isOnTopicHeader] = rec[isOnTopicHeader] ?? "";
+                }
+                return rec;
+            });
+
+            reviewQueue = allRows
+                .map((_, rowIdx) => rowIdx)
+                .filter((rowIdx) => {
+                    const row = allRows[rowIdx];
+                    const title = String(row[titleHeader] ?? "").trim();
+                    const alreadyReviewed = String(row[isOnTopicHeader] ?? "").trim() !== "";
+                    return title.length > 0 && !alreadyReviewed;
+                });
+
+            index = 0;
+            decisions = [];
+        }
+
+        function getByHeader(row, loweredHeader) {
+            const actualHeader = headerLookup[loweredHeader];
+            if (!actualHeader) {
+                return "";
+            }
+            return row[actualHeader] ?? "";
+        }
+
+        function setIsOnTopic(row, value) {
+            row[isOnTopicHeader] = value;
+        }
+
+        function reviewedCount() {
+            return allRows.filter((r) => String(r[isOnTopicHeader] ?? "").trim() !== "").length;
         }
 
         function setButtons() {
-            const hasData = rows.length > 0;
-            const inRange = hasData && index < rows.length;
+            const hasData = allRows.length > 0;
+            const inRange = hasData && index < reviewQueue.length;
             noBtn.disabled = !inRange;
             yesBtn.disabled = !inRange;
             undoBtn.disabled = decisions.length === 0;
-            exportBtn.disabled = decisions.length === 0;
+            exportBtn.disabled = allRows.length === 0;
         }
 
         function progressText() {
-            if (rows.length === 0) {
+            if (allRows.length === 0) {
                 return "No file loaded.";
             }
-            const reviewed = decisions.length;
-            return "Reviewed " + reviewed + " / " + rows.length;
+            const reviewed = reviewedCount();
+            const pending = Math.max(0, reviewQueue.length - index);
+            return "Reviewed " + reviewed + " / " + allRows.length + " | Remaining " + pending;
         }
 
         function updateMeta(extra) {
@@ -429,12 +472,13 @@
             const wrapper = document.createElement("article");
             wrapper.className = "card";
 
-            const title = escapeHtml(row.title || "(no title)");
-            const description = escapeHtml(row.description || "(no description)");
-            const source = escapeHtml(row.source || "n/a");
-            const id = escapeHtml(row.id || "n/a");
-            const publishDate = escapeHtml(row.publish_date || "n/a");
-            const link = row.link ? "<a href=\"" + escapeHtml(row.link) + "\" target=\"_blank\" rel=\"noopener\">Open link</a>" : "No link";
+            const title = escapeHtml(getByHeader(row, "title") || "(no title)");
+            const description = escapeHtml(getByHeader(row, "description") || "(no description)");
+            const source = escapeHtml(getByHeader(row, "source") || "n/a");
+            const id = escapeHtml(getByHeader(row, "id") || "n/a");
+            const publishDate = escapeHtml(getByHeader(row, "publish_date") || "n/a");
+            const linkValue = getByHeader(row, "link");
+            const link = linkValue ? "<a href=\"" + escapeHtml(linkValue) + "\" target=\"_blank\" rel=\"noopener\">Open link</a>" : "No link";
 
             wrapper.innerHTML = ""
                 + "<h2 class=\"title\">" + title + "</h2>"
@@ -463,40 +507,49 @@
             badgeNo.style.opacity = "0";
             badgeYes.style.opacity = "0";
 
-            if (rows.length === 0) {
+            if (allRows.length === 0) {
                 placeholder.style.display = "block";
-                placeholder.textContent = "Drop or choose a CSV file with headers like title, description, id, link, source.";
+                placeholder.textContent = "Drop or choose a CSV file with headers including title and description.";
                 updateMeta();
                 setButtons();
                 return;
             }
 
-            if (index >= rows.length) {
+            if (index >= reviewQueue.length) {
                 placeholder.style.display = "block";
-                const yesCount = decisions.filter((d) => d.decision === "yes").length;
-                const noCount = decisions.filter((d) => d.decision === "no").length;
-                placeholder.textContent = "Review complete. Yes: " + yesCount + ", No: " + noCount + ". Export when ready.";
+                const yesCount = allRows.filter((r) => String(r[isOnTopicHeader]).toLowerCase() === "yes").length;
+                const noCount = allRows.filter((r) => String(r[isOnTopicHeader]).toLowerCase() === "no").length;
+                placeholder.textContent = "Review complete for pending rows. Yes: " + yesCount + ", No: " + noCount + ". Export when ready.";
                 updateMeta("Done");
                 setButtons();
                 return;
             }
 
             placeholder.style.display = "none";
-            cardEl = makeCard(rows[index]);
+            const row = allRows[reviewQueue[index]];
+            cardEl = makeCard(row);
             stage.appendChild(cardEl);
             updateMeta();
             setButtons();
         }
 
         function recordDecision(direction) {
-            if (index >= rows.length) {
+            if (index >= reviewQueue.length) {
                 return;
             }
+
+            const rowIndex = reviewQueue[index];
+            const row = allRows[rowIndex];
+            const previous = String(row[isOnTopicHeader] ?? "");
+            const newValue = direction === "yes" ? "Yes" : "No";
+
+            setIsOnTopic(row, newValue);
             decisions.push({
-                index,
-                decision: direction,
-                decidedAt: new Date().toISOString()
+                queueIndex: index,
+                rowIndex,
+                previous
             });
+
             index += 1;
             render();
         }
@@ -517,7 +570,10 @@
             if (!last) {
                 return;
             }
-            index = last.index;
+
+            index = last.queueIndex;
+            const row = allRows[last.rowIndex];
+            setIsOnTopic(row, last.previous);
             render();
         }
 
@@ -588,7 +644,8 @@
 
         function csvEscape(value) {
             const s = String(value ?? "");
-            if (/[,"\n\r]/.test(s)) {
+            const needsQuotes = s.includes(detectedDelimiter) || /["\n\r]/.test(s);
+            if (needsQuotes) {
                 return '"' + s.replaceAll('"', '""') + '"';
             }
             return s;
@@ -604,40 +661,51 @@
             URL.revokeObjectURL(url);
         }
 
-        function exportDecisions() {
-            if (decisions.length === 0) {
+        function exportDataset() {
+            if (allRows.length === 0) {
                 return;
             }
 
-            const header = ["id", "title", "description", "link", "source", "decision", "decided_at"];
-            const lines = [header.join(",")];
+            const headersForExport = [...originalHeaders];
+            if (!headersForExport.some((h) => h.toLowerCase() === "isontopic")) {
+                headersForExport.push("IsOnTopic");
+                isOnTopicHeader = "IsOnTopic";
+            }
 
-            for (const d of decisions) {
-                const row = rows[d.index] || {};
-                const line = [
-                    csvEscape(row.id || ""),
-                    csvEscape(row.title || ""),
-                    csvEscape(row.description || ""),
-                    csvEscape(row.link || ""),
-                    csvEscape(row.source || ""),
-                    csvEscape(d.decision),
-                    csvEscape(d.decidedAt)
-                ];
-                lines.push(line.join(","));
+            const lines = [headersForExport.map(csvEscape).join(detectedDelimiter)];
+
+            for (const row of allRows) {
+                if (row[isOnTopicHeader] == null) {
+                    row[isOnTopicHeader] = "";
+                }
+                const line = headersForExport.map((header) => csvEscape(row[header] ?? ""));
+                lines.push(line.join(detectedDelimiter));
             }
 
             const stamp = new Date().toISOString().replaceAll(":", "-").replace(".", "_");
-            downloadCsv("swipe-decisions-" + stamp + ".csv", lines.join("\n"));
+            downloadCsv("swipe-progress-" + stamp + ".csv", lines.join("\n"));
         }
 
         async function loadFromFile(file) {
             const text = await file.text();
-            const parsed = buildRowsFromText(text);
-            rows = parsed;
+            buildRowsFromText(text);
+            render();
+
+            const skippedReviewed = allRows.length - reviewQueue.length;
+            updateMeta(file.name + " loaded | skipped pre-reviewed/blank-title: " + skippedReviewed);
+        }
+
+        function resetStateWithError(message) {
+            allRows = [];
+            reviewQueue = [];
             index = 0;
             decisions = [];
+            originalHeaders = [];
+            headerLookup = {};
+            isOnTopicHeader = "IsOnTopic";
+            detectedDelimiter = ",";
             render();
-            updateMeta(file.name + " loaded");
+            alert(message);
         }
 
         fileInput.addEventListener("change", async (e) => {
@@ -648,11 +716,7 @@
             try {
                 await loadFromFile(file);
             } catch (err) {
-                rows = [];
-                index = 0;
-                decisions = [];
-                render();
-                alert("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
+                resetStateWithError("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
             }
         });
 
@@ -669,18 +733,14 @@
             try {
                 await loadFromFile(file);
             } catch (err) {
-                rows = [];
-                index = 0;
-                decisions = [];
-                render();
-                alert("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
+                resetStateWithError("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
             }
         });
 
         noBtn.addEventListener("click", () => animateAndRecord("no"));
         yesBtn.addEventListener("click", () => animateAndRecord("yes"));
         undoBtn.addEventListener("click", undo);
-        exportBtn.addEventListener("click", exportDecisions);
+        exportBtn.addEventListener("click", exportDataset);
 
         window.addEventListener("keydown", (e) => {
             if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
