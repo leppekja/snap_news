@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snap News Swipe Review</title>
+    <style>
+        :root {
+            --bg-1: #f3f7fb;
+            --bg-2: #dbe8f5;
+            --ink: #1f2a37;
+            --muted: #5f6d7a;
+            --card: #ffffff;
+            --yes: #127a43;
+            --no: #a12b2b;
+            --line: #c6d4e1;
+            --accent: #2a5c8a;
+            --shadow: 0 16px 30px rgba(18, 42, 66, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 10% 10%, rgba(42, 92, 138, 0.18), transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(18, 122, 67, 0.12), transparent 34%),
+                linear-gradient(170deg, var(--bg-1), var(--bg-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .app {
+            width: min(920px, 100%);
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.4rem, 2.3vw, 2rem);
+            letter-spacing: 0.2px;
+        }
+
+        .sub {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .file-wrap {
+            border: 2px dashed var(--line);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            font-size: 0.9rem;
+            color: var(--ink);
+        }
+
+        .meta {
+            text-align: right;
+            color: var(--muted);
+            font-size: 0.9rem;
+            min-width: 180px;
+        }
+
+        .stage {
+            position: relative;
+            height: min(58vh, 520px);
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f5f9fd);
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            padding: 14px;
+        }
+
+        .placeholder {
+            color: var(--muted);
+            text-align: center;
+            max-width: 580px;
+            line-height: 1.45;
+        }
+
+        .card {
+            width: min(640px, 100%);
+            height: 100%;
+            background: var(--card);
+            border: 1px solid #d3e0eb;
+            border-radius: 14px;
+            box-shadow: 0 10px 24px rgba(33, 63, 92, 0.15);
+            padding: 16px;
+            user-select: none;
+            touch-action: none;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 10px;
+            transition: transform 180ms ease;
+        }
+
+        .title {
+            margin: 0;
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            line-height: 1.28;
+        }
+
+        .description {
+            margin: 0;
+            overflow: auto;
+            line-height: 1.5;
+            color: #243647;
+            white-space: pre-wrap;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .pill {
+            border: 1px solid #d7e4ef;
+            border-radius: 999px;
+            padding: 2px 8px;
+            background: #f7fbff;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: #fff;
+            min-width: 110px;
+            transition: transform 120ms ease, opacity 120ms ease;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .no {
+            background: var(--no);
+        }
+
+        .yes {
+            background: var(--yes);
+        }
+
+        .undo {
+            background: var(--accent);
+        }
+
+        .export {
+            background: #375f19;
+            min-width: 160px;
+        }
+
+        .badge {
+            position: absolute;
+            top: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 120ms ease;
+        }
+
+        .badge.no {
+            left: 28px;
+            color: var(--no);
+            border: 2px solid var(--no);
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .badge.yes {
+            right: 28px;
+            color: var(--yes);
+            border: 2px solid var(--yes);
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 760px) {
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .meta {
+                text-align: left;
+            }
+
+            .stage {
+                height: min(64vh, 520px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="app">
+        <h1>Swipe Review</h1>
+        <p class="sub">Upload CSV, swipe right for Yes, left for No. Keyboard: Right, Left, Z(Undo).</p>
+
+        <div class="toolbar">
+            <label class="file-wrap">
+                <strong>Load CSV</strong>
+                <input id="fileInput" type="file" accept=".csv,text/csv">
+            </label>
+            <div class="meta" id="meta">No file loaded.</div>
+        </div>
+
+        <section class="stage" id="stage">
+            <div class="placeholder" id="placeholder">
+                Drop or choose a CSV file with headers like title, description, id, link, source.
+            </div>
+            <div class="badge no" id="badgeNo">NO</div>
+            <div class="badge yes" id="badgeYes">YES</div>
+        </section>
+
+        <div class="actions">
+            <button class="no" id="noBtn" disabled>No (Left)</button>
+            <button class="undo" id="undoBtn" disabled>Undo (Z)</button>
+            <button class="yes" id="yesBtn" disabled>Yes (Right)</button>
+            <button class="export" id="exportBtn" disabled>Export Decisions</button>
+        </div>
+    </main>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const stage = document.getElementById("stage");
+        const meta = document.getElementById("meta");
+        const placeholder = document.getElementById("placeholder");
+        const noBtn = document.getElementById("noBtn");
+        const yesBtn = document.getElementById("yesBtn");
+        const undoBtn = document.getElementById("undoBtn");
+        const exportBtn = document.getElementById("exportBtn");
+        const badgeNo = document.getElementById("badgeNo");
+        const badgeYes = document.getElementById("badgeYes");
+
+        let rows = [];
+        let index = 0;
+        let decisions = [];
+        let cardEl = null;
+
+        const drag = {
+            active: false,
+            startX: 0,
+            dx: 0
+        };
+
+        const csvRequired = ["title", "description"];
+
+        function escapeHtml(text) {
+            return String(text ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function detectDelimiter(headerLine) {
+            const options = [",", "\t", ";", "|"];
+            let best = ",";
+            let bestScore = -1;
+            for (const delim of options) {
+                const score = headerLine.split(delim).length;
+                if (score > bestScore) {
+                    best = delim;
+                    bestScore = score;
+                }
+            }
+            return best;
+        }
+
+        function parseDelimited(text, delimiter) {
+            const out = [];
+            let row = [];
+            let field = "";
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i += 1) {
+                const c = text[i];
+                const next = text[i + 1];
+
+                if (c === '"') {
+                    if (inQuotes && next === '"') {
+                        field += '"';
+                        i += 1;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                    continue;
+                }
+
+                if (!inQuotes && c === delimiter) {
+                    row.push(field);
+                    field = "";
+                    continue;
+                }
+
+                if (!inQuotes && (c === "\n" || c === "\r")) {
+                    if (c === "\r" && next === "\n") {
+                        i += 1;
+                    }
+                    row.push(field);
+                    out.push(row);
+                    row = [];
+                    field = "";
+                    continue;
+                }
+
+                field += c;
+            }
+
+            if (field.length > 0 || row.length > 0) {
+                row.push(field);
+                out.push(row);
+            }
+
+            return out;
+        }
+
+        function normalizeRowKeys(row) {
+            const normalized = {};
+            for (const [k, v] of Object.entries(row)) {
+                normalized[String(k).trim().toLowerCase()] = typeof v === "string" ? v.trim() : v;
+            }
+            return normalized;
+        }
+
+        function buildRowsFromText(text) {
+            const firstLine = text.split(/\r?\n/, 1)[0] || "";
+            const delimiter = detectDelimiter(firstLine);
+            const table = parseDelimited(text, delimiter).filter((r) => r.some((c) => String(c).trim() !== ""));
+
+            if (table.length < 2) {
+                throw new Error("CSV appears empty or missing data rows.");
+            }
+
+            const headers = table[0].map((h) => String(h).trim().toLowerCase());
+            const data = table.slice(1).map((line, lineIdx) => {
+                const rec = {};
+                headers.forEach((h, i) => {
+                    rec[h] = (line[i] ?? "").trim();
+                });
+                rec.__line = lineIdx + 2;
+                return normalizeRowKeys(rec);
+            });
+
+            const hasRequired = csvRequired.every((key) => headers.includes(key));
+            if (!hasRequired) {
+                throw new Error("Missing required headers: title and description.");
+            }
+
+            // Drop rows that have no usable title, per default behavior.
+            return data.filter((r) => (r.title || "").trim().length > 0);
+        }
+
+        function setButtons() {
+            const hasData = rows.length > 0;
+            const inRange = hasData && index < rows.length;
+            noBtn.disabled = !inRange;
+            yesBtn.disabled = !inRange;
+            undoBtn.disabled = decisions.length === 0;
+            exportBtn.disabled = decisions.length === 0;
+        }
+
+        function progressText() {
+            if (rows.length === 0) {
+                return "No file loaded.";
+            }
+            const reviewed = decisions.length;
+            return "Reviewed " + reviewed + " / " + rows.length;
+        }
+
+        function updateMeta(extra) {
+            meta.textContent = extra ? progressText() + " | " + extra : progressText();
+        }
+
+        function makeCard(row) {
+            const wrapper = document.createElement("article");
+            wrapper.className = "card";
+
+            const title = escapeHtml(row.title || "(no title)");
+            const description = escapeHtml(row.description || "(no description)");
+            const source = escapeHtml(row.source || "n/a");
+            const id = escapeHtml(row.id || "n/a");
+            const publishDate = escapeHtml(row.publish_date || "n/a");
+            const link = row.link ? "<a href=\"" + escapeHtml(row.link) + "\" target=\"_blank\" rel=\"noopener\">Open link</a>" : "No link";
+
+            wrapper.innerHTML = ""
+                + "<h2 class=\"title\">" + title + "</h2>"
+                + "<p class=\"description\">" + description + "</p>"
+                + "<div class=\"row\">"
+                + "<span class=\"pill\">id: " + id + "</span>"
+                + "<span class=\"pill\">source: " + source + "</span>"
+                + "<span class=\"pill\">publish: " + publishDate + "</span>"
+                + "<span class=\"pill\">" + link + "</span>"
+                + "</div>";
+
+            wrapper.addEventListener("pointerdown", onPointerDown);
+            wrapper.addEventListener("pointermove", onPointerMove);
+            wrapper.addEventListener("pointerup", onPointerUp);
+            wrapper.addEventListener("pointercancel", onPointerCancel);
+
+            return wrapper;
+        }
+
+        function render() {
+            if (cardEl) {
+                cardEl.remove();
+                cardEl = null;
+            }
+
+            badgeNo.style.opacity = "0";
+            badgeYes.style.opacity = "0";
+
+            if (rows.length === 0) {
+                placeholder.style.display = "block";
+                placeholder.textContent = "Drop or choose a CSV file with headers like title, description, id, link, source.";
+                updateMeta();
+                setButtons();
+                return;
+            }
+
+            if (index >= rows.length) {
+                placeholder.style.display = "block";
+                const yesCount = decisions.filter((d) => d.decision === "yes").length;
+                const noCount = decisions.filter((d) => d.decision === "no").length;
+                placeholder.textContent = "Review complete. Yes: " + yesCount + ", No: " + noCount + ". Export when ready.";
+                updateMeta("Done");
+                setButtons();
+                return;
+            }
+
+            placeholder.style.display = "none";
+            cardEl = makeCard(rows[index]);
+            stage.appendChild(cardEl);
+            updateMeta();
+            setButtons();
+        }
+
+        function recordDecision(direction) {
+            if (index >= rows.length) {
+                return;
+            }
+            decisions.push({
+                index,
+                decision: direction,
+                decidedAt: new Date().toISOString()
+            });
+            index += 1;
+            render();
+        }
+
+        function animateAndRecord(direction) {
+            if (!cardEl) {
+                return;
+            }
+            const x = direction === "yes" ? 900 : -900;
+            const rotate = direction === "yes" ? 25 : -25;
+            cardEl.style.transition = "transform 180ms ease";
+            cardEl.style.transform = "translateX(" + x + "px) rotate(" + rotate + "deg)";
+            setTimeout(() => recordDecision(direction), 170);
+        }
+
+        function undo() {
+            const last = decisions.pop();
+            if (!last) {
+                return;
+            }
+            index = last.index;
+            render();
+        }
+
+        function onPointerDown(e) {
+            if (!cardEl) {
+                return;
+            }
+            drag.active = true;
+            drag.startX = e.clientX;
+            drag.dx = 0;
+            cardEl.style.transition = "none";
+            cardEl.setPointerCapture(e.pointerId);
+        }
+
+        function onPointerMove(e) {
+            if (!drag.active || !cardEl) {
+                return;
+            }
+            drag.dx = e.clientX - drag.startX;
+            const rotate = drag.dx * 0.04;
+            cardEl.style.transform = "translateX(" + drag.dx + "px) rotate(" + rotate + "deg)";
+            if (drag.dx > 30) {
+                badgeYes.style.opacity = "1";
+                badgeNo.style.opacity = "0";
+            } else if (drag.dx < -30) {
+                badgeNo.style.opacity = "1";
+                badgeYes.style.opacity = "0";
+            } else {
+                badgeNo.style.opacity = "0";
+                badgeYes.style.opacity = "0";
+            }
+        }
+
+        function onPointerUp(e) {
+            if (!drag.active || !cardEl) {
+                return;
+            }
+            drag.active = false;
+            badgeNo.style.opacity = "0";
+            badgeYes.style.opacity = "0";
+
+            const threshold = 110;
+            if (drag.dx > threshold) {
+                animateAndRecord("yes");
+            } else if (drag.dx < -threshold) {
+                animateAndRecord("no");
+            } else {
+                cardEl.style.transition = "transform 160ms ease";
+                cardEl.style.transform = "translateX(0) rotate(0)";
+            }
+            try {
+                cardEl.releasePointerCapture(e.pointerId);
+            } catch (err) {
+                // Ignore when capture is already released by browser.
+            }
+        }
+
+        function onPointerCancel() {
+            if (!drag.active || !cardEl) {
+                return;
+            }
+            drag.active = false;
+            badgeNo.style.opacity = "0";
+            badgeYes.style.opacity = "0";
+            cardEl.style.transition = "transform 160ms ease";
+            cardEl.style.transform = "translateX(0) rotate(0)";
+        }
+
+        function csvEscape(value) {
+            const s = String(value ?? "");
+            if (/[,"\n\r]/.test(s)) {
+                return '"' + s.replaceAll('"', '""') + '"';
+            }
+            return s;
+        }
+
+        function downloadCsv(filename, text) {
+            const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportDecisions() {
+            if (decisions.length === 0) {
+                return;
+            }
+
+            const header = ["id", "title", "description", "link", "source", "decision", "decided_at"];
+            const lines = [header.join(",")];
+
+            for (const d of decisions) {
+                const row = rows[d.index] || {};
+                const line = [
+                    csvEscape(row.id || ""),
+                    csvEscape(row.title || ""),
+                    csvEscape(row.description || ""),
+                    csvEscape(row.link || ""),
+                    csvEscape(row.source || ""),
+                    csvEscape(d.decision),
+                    csvEscape(d.decidedAt)
+                ];
+                lines.push(line.join(","));
+            }
+
+            const stamp = new Date().toISOString().replaceAll(":", "-").replace(".", "_");
+            downloadCsv("swipe-decisions-" + stamp + ".csv", lines.join("\n"));
+        }
+
+        async function loadFromFile(file) {
+            const text = await file.text();
+            const parsed = buildRowsFromText(text);
+            rows = parsed;
+            index = 0;
+            decisions = [];
+            render();
+            updateMeta(file.name + " loaded");
+        }
+
+        fileInput.addEventListener("change", async (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) {
+                return;
+            }
+            try {
+                await loadFromFile(file);
+            } catch (err) {
+                rows = [];
+                index = 0;
+                decisions = [];
+                render();
+                alert("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
+            }
+        });
+
+        stage.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        stage.addEventListener("drop", async (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+            if (!file) {
+                return;
+            }
+            try {
+                await loadFromFile(file);
+            } catch (err) {
+                rows = [];
+                index = 0;
+                decisions = [];
+                render();
+                alert("Could not read file: " + (err && err.message ? err.message : "Unknown error"));
+            }
+        });
+
+        noBtn.addEventListener("click", () => animateAndRecord("no"));
+        yesBtn.addEventListener("click", () => animateAndRecord("yes"));
+        undoBtn.addEventListener("click", undo);
+        exportBtn.addEventListener("click", exportDecisions);
+
+        window.addEventListener("keydown", (e) => {
+            if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
+                return;
+            }
+            if (e.key === "ArrowLeft") {
+                animateAndRecord("no");
+            } else if (e.key === "ArrowRight") {
+                animateAndRecord("yes");
+            } else if (e.key.toLowerCase() === "z") {
+                undo();
+            }
+        });
+
+        render();
+    </script>
+</body>
+
+</html>
