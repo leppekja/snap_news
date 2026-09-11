@@ -51,16 +51,8 @@
             box-shadow: var(--shadow);
         }
 
-        h1 {
-            margin: 0 0 8px;
-            font-size: clamp(1.4rem, 2.3vw, 2rem);
-            letter-spacing: 0.2px;
-        }
-
-        .sub {
-            margin: 0 0 14px;
-            color: var(--muted);
-            font-size: 0.95rem;
+        .toolbar-hidden {
+            display: none;
         }
 
         .toolbar {
@@ -68,7 +60,7 @@
             grid-template-columns: 1fr auto;
             gap: 10px;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .file-wrap {
@@ -94,7 +86,7 @@
 
         .stage {
             position: relative;
-            height: min(58vh, 540px);
+            height: min(72vh, 720px);
             border-radius: 14px;
             border: 1px solid var(--line);
             background: linear-gradient(180deg, #101827, #0d1522);
@@ -118,7 +110,7 @@
             border: 1px solid #32465f;
             border-radius: 14px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-            padding: 16px;
+            padding: 18px;
             user-select: none;
             touch-action: none;
             display: grid;
@@ -129,14 +121,15 @@
 
         .title {
             margin: 0;
-            font-size: clamp(1.1rem, 2vw, 1.4rem);
-            line-height: 1.28;
+            font-size: clamp(1.35rem, 3.2vw, 2rem);
+            line-height: 1.24;
         }
 
         .description {
             margin: 0;
             overflow: auto;
-            line-height: 1.5;
+            line-height: 1.55;
+            font-size: clamp(1.05rem, 2.4vw, 1.25rem);
             color: #d5e2f5;
             white-space: pre-wrap;
         }
@@ -146,7 +139,7 @@
             flex-wrap: wrap;
             gap: 8px;
             color: var(--muted);
-            font-size: 0.86rem;
+            font-size: 0.95rem;
         }
 
         .pill {
@@ -164,7 +157,7 @@
             display: flex;
             gap: 8px;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 10px;
             flex-wrap: wrap;
         }
 
@@ -175,7 +168,7 @@
             font-size: 0.95rem;
             cursor: pointer;
             color: #fff;
-            min-width: 110px;
+            min-width: 120px;
             transition: transform 120ms ease, opacity 120ms ease;
         }
 
@@ -245,7 +238,11 @@
             }
 
             .stage {
-                height: min(66vh, 560px);
+                height: min(76vh, 760px);
+            }
+
+            .card {
+                padding: 14px;
             }
         }
     </style>
@@ -253,11 +250,7 @@
 
 <body>
     <main class="app">
-        <h1>Swipe Review</h1>
-        <p class="sub">Dark mode only. Upload original CSV, swipe Right/Left, export same file with IsOnTopic. Re-upload
-            to continue from remaining rows.</p>
-
-        <div class="toolbar">
+        <div class="toolbar" id="uploadToolbar">
             <label class="file-wrap">
                 <strong>Load CSV</strong>
                 <input id="fileInput" type="file" accept=".csv,text/csv">
@@ -267,27 +260,24 @@
 
         <section class="stage" id="stage">
             <div class="placeholder" id="placeholder">
-                Drop or choose a CSV file with headers including title and description.
+                Drop CSV
             </div>
             <div class="badge no" id="badgeNo">NO</div>
             <div class="badge yes" id="badgeYes">YES</div>
         </section>
 
         <div class="actions">
-            <button class="no" id="noBtn" disabled>No (Left)</button>
             <button class="undo" id="undoBtn" disabled>Undo (Z)</button>
-            <button class="yes" id="yesBtn" disabled>Yes (Right)</button>
             <button class="export" id="exportBtn" disabled>Export With IsOnTopic</button>
         </div>
     </main>
 
     <script>
         const fileInput = document.getElementById("fileInput");
+        const uploadToolbar = document.getElementById("uploadToolbar");
         const stage = document.getElementById("stage");
         const meta = document.getElementById("meta");
         const placeholder = document.getElementById("placeholder");
-        const noBtn = document.getElementById("noBtn");
-        const yesBtn = document.getElementById("yesBtn");
         const undoBtn = document.getElementById("undoBtn");
         const exportBtn = document.getElementById("exportBtn");
         const badgeNo = document.getElementById("badgeNo");
@@ -449,10 +439,9 @@
         function setButtons() {
             const hasData = allRows.length > 0;
             const inRange = hasData && index < reviewQueue.length;
-            noBtn.disabled = !inRange;
-            yesBtn.disabled = !inRange;
             undoBtn.disabled = decisions.length === 0;
             exportBtn.disabled = allRows.length === 0;
+            stage.style.pointerEvents = inRange ? "auto" : "auto";
         }
 
         function progressText() {
@@ -509,7 +498,7 @@
 
             if (allRows.length === 0) {
                 placeholder.style.display = "block";
-                placeholder.textContent = "Drop or choose a CSV file with headers including title and description.";
+                placeholder.textContent = "Drop CSV";
                 updateMeta();
                 setButtons();
                 return;
@@ -558,8 +547,8 @@
             if (!cardEl) {
                 return;
             }
-            const x = direction === "yes" ? 900 : -900;
-            const rotate = direction === "yes" ? 25 : -25;
+            const x = direction === "yes" ? 560 : -560;
+            const rotate = direction === "yes" ? 18 : -18;
             cardEl.style.transition = "transform 180ms ease";
             cardEl.style.transform = "translateX(" + x + "px) rotate(" + rotate + "deg)";
             setTimeout(() => recordDecision(direction), 170);
@@ -615,7 +604,7 @@
             badgeNo.style.opacity = "0";
             badgeYes.style.opacity = "0";
 
-            const threshold = 110;
+            const threshold = 52;
             if (drag.dx > threshold) {
                 animateAndRecord("yes");
             } else if (drag.dx < -threshold) {
@@ -689,6 +678,7 @@
         async function loadFromFile(file) {
             const text = await file.text();
             buildRowsFromText(text);
+            uploadToolbar.classList.add("toolbar-hidden");
             render();
 
             const skippedReviewed = allRows.length - reviewQueue.length;
@@ -704,6 +694,7 @@
             headerLookup = {};
             isOnTopicHeader = "IsOnTopic";
             detectedDelimiter = ",";
+            uploadToolbar.classList.remove("toolbar-hidden");
             render();
             alert(message);
         }
@@ -737,8 +728,6 @@
             }
         });
 
-        noBtn.addEventListener("click", () => animateAndRecord("no"));
-        yesBtn.addEventListener("click", () => animateAndRecord("yes"));
         undoBtn.addEventListener("click", undo);
         exportBtn.addEventListener("click", exportDataset);
 
