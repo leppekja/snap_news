@@ -44,10 +44,8 @@
         .app {
             width: min(940px, 100%);
             background: var(--panel);
-            border: 1px solid #324965;
             backdrop-filter: blur(8px);
             border-radius: 18px;
-            padding: 18px;
             box-shadow: var(--shadow);
         }
 
@@ -114,7 +112,7 @@
             user-select: none;
             touch-action: none;
             display: grid;
-            grid-template-rows: auto 1fr auto;
+            grid-template-rows: auto minmax(0, 1fr) auto;
             gap: 10px;
             transition: transform 180ms ease;
         }
@@ -123,6 +121,8 @@
             margin: 0;
             font-size: clamp(1.35rem, 3.2vw, 2rem);
             line-height: 1.24;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .description {
@@ -132,6 +132,8 @@
             font-size: clamp(1.05rem, 2.4vw, 1.25rem);
             color: #d5e2f5;
             white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .row {
@@ -147,10 +149,16 @@
             border-radius: 999px;
             padding: 2px 8px;
             background: rgba(24, 38, 58, 0.9);
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .pill a {
             color: #9ac8ff;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .actions {
@@ -228,6 +236,22 @@
         }
 
         @media (max-width: 760px) {
+            body {
+                align-items: stretch;
+                justify-content: flex-start;
+                padding: 12px;
+            }
+
+            .app {
+                width: 100%;
+                background: transparent;
+                border: 0;
+                backdrop-filter: none;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
             .toolbar {
                 grid-template-columns: 1fr;
             }
